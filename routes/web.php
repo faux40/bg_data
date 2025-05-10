@@ -13,7 +13,7 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::get('/tasmota/log', [SensorDataController::class, 'store']);
+Route::post('/sensor', [SensorDataController::class, 'store']);
 
 
 
