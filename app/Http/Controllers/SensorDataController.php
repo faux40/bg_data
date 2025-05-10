@@ -10,10 +10,10 @@ class SensorDataController extends Controller
     public function store(Request $request)
     {
         if ($request->get('sid') !== env('TASMOTA_SID')) {
-            abort(403, 'Invalid SID');
+            return response()->json(['error' => 'Invalid SID'], 403);
         }
-
-        DB::table('tasmota_sensor_logs')->insert([
+    
+        DB::table('sensor_data_table')->insert([
             'unit' => $request->get('unit'),
             'controller' => $request->get('controller'),
             'model' => $request->get('model'),
@@ -25,8 +25,7 @@ class SensorDataController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
+    
         return response()->json(['ok' => true]);
     }
-    
 }
