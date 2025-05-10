@@ -9,7 +9,10 @@ class SensorDataController extends Controller
 {
     public function store(Request $request)
     {
-        if ($request->get('sid') !== env('TASMOTA_SID')) {
+        // if ($request->get('sid') !== env('TASMOTA_SID')) {
+        //     return response()->json(['error' => 'Invalid SID'], 403);
+        // }
+        if ($request->get('sid') !== '675bc5a5e800d0c39b9bfc47bc599016') {
             return response()->json(['error' => 'Invalid SID'], 403);
         }
     
