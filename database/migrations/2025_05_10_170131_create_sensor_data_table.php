@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('sensor_data', function (Blueprint $table) {
             $table->id();
-            $table->string('unit');
+            $table->string('unit')->nullable();
             $table->string('controller')->nullable();
             $table->string('model')->nullable();
             $table->decimal('temp', 5, 2)->nullable();
             $table->decimal('hum', 5, 2)->nullable();
             $table->string('relay1_status')->nullable();
             $table->string('relay2_status')->nullable();
-            $table->string('sid');
+            $table->string('sid')->nullable();
             $table->timestampsTz();
         });
     }

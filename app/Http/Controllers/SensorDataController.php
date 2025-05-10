@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SensorDataController extends Controller
 {
     public function store(Request $request)
     {
+        Log::info('Received Tasmota data', $request->all());
         // if ($request->get('sid') !== env('TASMOTA_SID')) {
         //     return response()->json(['error' => 'Invalid SID'], 403);
         // }
