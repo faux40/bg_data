@@ -28,4 +28,5 @@ class SensorDataController extends Controller
 
         return response()->json(['ok' => true]);
     }
+    
 }
