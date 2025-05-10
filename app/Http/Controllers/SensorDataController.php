@@ -13,7 +13,7 @@ class SensorDataController extends Controller
             return response()->json(['error' => 'Invalid SID'], 403);
         }
     
-        DB::table('sensor_data_table')->insert([
+        DB::table('sensor_data')->insert([
             'unit' => $request->get('unit'),
             'controller' => $request->get('controller'),
             'model' => $request->get('model'),
