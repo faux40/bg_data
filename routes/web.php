@@ -14,7 +14,9 @@ Route::get('dashboard', function () {
 
 
 // Route::post('/sensor', [SensorDataController::class, 'store']);
-
+Route::get('/check-sid', function () {
+    return env('TASMOTA_SID');
+});
 
 
 require __DIR__.'/settings.php';
