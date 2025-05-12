@@ -10,7 +10,10 @@ class SensorDataController extends Controller
 {
     public function store(Request $request)
     {
-        Log::info('Received Tasmota data', $request->all());
+        // Log::info('Received Tasmota data', $request->all());
+
+    // ✅ Log the entire query string or selected fields
+    Log::info('Received sensor data', $request->all());
         // if ($request->get('sid') !== env('TASMOTA_SID')) {
         //     return response()->json(['error' => 'Invalid SID'], 403);
         // }
@@ -24,13 +27,18 @@ class SensorDataController extends Controller
             'model' => $request->get('model'),
             'temp' => $request->get('temp'),
             'hum' => $request->get('hum'),
-            'relay1_status' => $request->get('relay1'),
-            'relay2_status' => $request->get('relay2'),
+            'dewpoint' => $request->get('dewpoint'),
+            'relay1' => $request->get('relay1'),
+            'relay2' => $request->get('relay2'),
             'sid' => $request->get('sid'),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
     
+    //     return response('OK', 200)
+    //    ->header('Content-Type', 'text/plain');
+
+
         return response()->json(['ok' => true]);
     }
 }
