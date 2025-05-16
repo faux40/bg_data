@@ -8,12 +8,22 @@ use Illuminate\Support\Facades\Log;
 
 class SensorDataController extends Controller
 {
+    public function index()
+    {
+        // Replace 'sensor_data_table' with your actual table name
+        // $data = DB::table('sensor_data')->orderByDesc('created_at')->limit(100)->get();
+        $data = DB::table('sensor_data')->orderBy('created_at', 'desc')->limit(100)->get();
+
+        return view('sensor-data.index', compact('data'));
+    }
+
+
     public function store(Request $request)
     {
         // Log::info('Received Tasmota data', $request->all());
 
     // ✅ Log the entire query string or selected fields
-    Log::info('Received sensor data', $request->all());
+    // Log::info('Received sensor data', $request->all());
         // if ($request->get('sid') !== env('TASMOTA_SID')) {
         //     return response()->json(['error' => 'Invalid SID'], 403);
         // }
