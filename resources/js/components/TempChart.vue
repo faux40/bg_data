@@ -96,14 +96,17 @@ function renderChart() {
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="w-full my-8 border-b border-black pb-4">
     <div v-if="showHeatWarning" class="bg-red-600 text-white text-center font-bold py-2 mb-2">
       ⚠️ High Indoor Heat Rules In Effect ({{ HEAT_INDEX_ALERT_THRESHOLD }} degrees and above)
     </div>
 
     <div class="h-64 w-full">
-        <span v-if="false">latestHeatIndex }}<br>{{ HEAT_INDEX_ALERT_THRESHOLD }}</span>
+        <span v-if="true">{{ latestHeatIndex }} = {{ HEAT_INDEX_ALERT_THRESHOLD }}</span>
       <canvas ref="canvas"></canvas>
     </div>
+
+    <hr class="my-4 border-t border-black" />
+
   </div>
 </template>
