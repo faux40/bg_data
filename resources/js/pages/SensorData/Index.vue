@@ -28,7 +28,8 @@ const heatIndex = (T, R) => {
   ).toFixed(1)
 }
 
-const secondsToRefresh = ref(10)
+const REFRESH_INTERVAL = 10 // in seconds
+const secondsToRefresh = ref(REFRESH_INTERVAL)
 
 // Refresh every 60 seconds
 
@@ -41,7 +42,7 @@ onMounted(() => {
         preserveScroll: true,
         only: ['data'],
       })
-      secondsToRefresh.value = 60
+      secondsToRefresh.value = REFRESH_INTERVAL
     }
   }, 1000)
 })

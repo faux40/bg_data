@@ -8,29 +8,46 @@ const props = defineProps({
   data: Array,
 })
 
+const reversed = [...props.data].reverse()
+
 const canvas = ref(null)
 let chart = null
+
+const badAir = 3;
+const crapAir = 5;
 
 // const latestPm25 = computed(() => {
 //   if (!props.data?.length) return null
 //   return props.data[props.data.length - 1].pm2_5_std ?? null
 // })
-const latestPm25 = computed(() => {
-  if (!props.data?.length) return null
-  return props.data[props.data.length - 1].pm2_5_std ?? null
-})
+
+// const latestPm25 = computed(() => {
+//   if (!props.data?.length) return 0 // fallback to 0 if no data
+//   return props.data.at(-1)?.pm2_5_std ?? 0
+// })
+
+const latestPm25 = computed(() => reversed.at(-1)?.pm2_5_std ?? null)
+
+// const showHeatWarning = computed(() => latestHeatIndex.value > HEAT_INDEX_ALERT_THRESHOLD)
+
+
 // const showAQIWarning = computed(() => latestPm25.value > 2 && latestPm25.value <= 3)
 // const showSevereAQIWarning = computed(() => latestPm25.value > 3)
 
-const showAQIWarning = computed(() => {
-  if (latestPm25.value == null) return false
-  return latestPm25.value > 2
-})
 
-const showSevereAQIWarning = computed(() => {
-  if (latestPm25.value == null) return false
-  return latestPm25.value > 3
-})
+const isBadAir = computed(() => latestPm25.value >= badAir)
+const isCrapAir = computed(() => latestPm25.value >= crapAir)
+
+
+// const showAQIWarning = computed(() => {
+//   if (latestPm25.value == null) return false
+//   return latestPm25.value > badAir
+// })
+
+// const showSevereAQIWarning = computed(() => {
+//   if (latestPm25.value == null) return false
+//   return latestPm25.value > crapAir
+// })
 
 
 onMounted(() => renderChart())
@@ -54,9 +71,9 @@ function renderChart() {
     beforeDraw: (chart) => {
       const ctx = chart.canvas.getContext('2d')
       ctx.save()
-      if (showSevereAQIWarning.value) {
+      if (isCrapAir.value) {
         ctx.fillStyle = 'rgba(255, 0, 0, 0.1)' // red
-      } else if (showAQIWarning.value) {
+      } else if (isBadAir.value) {
         ctx.fillStyle = 'rgba(255, 165, 0, 0.1)' // orange
       } else {
         ctx.fillStyle = 'white'
@@ -105,10 +122,11 @@ function renderChart() {
 
 <template>
   <div class="w-full">
-    <div v-if="showSevereAQIWarning" class="bg-red-600 text-white text-center font-bold py-2 mb-2">
+        <span v-if="true">Latest AQI PM2.5 = {{ latestPm25 ?? '—' }}, Not Good = {{ badAir }} {{ isBadAir }}, Crap = {{ crapAir }} {{ isCrapAir }}</span>
+    <div v-if="isCrapAir" class="bg-red-600 text-white text-center font-bold py-2 mb-2">
       ⚠️ P100 Required – Poor Air Quality
     </div>
-    <div v-else-if="showAQIWarning" class="bg-orange-500 text-white text-center font-bold py-2 mb-2">
+    <div v-else-if="isBadAir" class="bg-orange-500 text-white text-center font-bold py-2 mb-2">
       ⚠️ N95 Required – Elevated Air Quality Risk
     </div>
 

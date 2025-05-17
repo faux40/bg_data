@@ -8,7 +8,7 @@ const canvas = ref(null)
 let chart = null
 
 const toF = c => (c * 9) / 5 + 32
-const HEAT_INDEX_ALERT_THRESHOLD = 82
+const HEAT_INDEX_ALERT_THRESHOLD = 81.79
 const reversed = [...props.data].reverse()
 
 // const latestHeatIndex = computed(() => props.data.at(-1)?.heat_index_f ?? null)
@@ -16,7 +16,7 @@ const reversed = [...props.data].reverse()
 
 // const latestHeatIndex = computed(() => reversed.at(0)?.heat_index_f ?? null)
 const latestHeatIndex = computed(() => reversed.at(-1)?.heat_index_f ?? null)
-const showHeatWarning = computed(() => latestHeatIndex.value > 75)//HEAT_INDEX_ALERT_THRESHOLD)
+const showHeatWarning = computed(() => latestHeatIndex.value > HEAT_INDEX_ALERT_THRESHOLD)
 
 onMounted(() => renderChart())
 watch(() => props.data, renderChart, { deep: true })
@@ -24,18 +24,19 @@ watch(() => props.data, renderChart, { deep: true })
 function renderChart() {
   if (chart) chart.destroy()
 
-  const reversed = [...props.data].reverse()
-  const labels = reversed.map(row => new Date(row.created_at).toLocaleTimeString())
-  const temperatureF = reversed.map(row => toF(row.temperature))
-  const humidity = reversed.map(row => row.humidity)
-  const heatIndex = reversed.map(row => row.heat_index_f)
+  const labels = props.data.map(row => new Date(row.created_at).toLocaleTimeString()).reverse()
+  const temperatureF = props.data.map(row => toF(row.temperature)).reverse()
+  const humidity = props.data.map(row => row.humidity).reverse()
+  const heatIndex = props.data.map(row => row.heat_index_f).reverse()
+
+  const isHot = showHeatWarning.value // ✅ Capture *now* rather than closing over it
 
   const backgroundPlugin = {
     id: 'customBackgroundColor',
     beforeDraw: (chart) => {
       const ctx = chart.canvas.getContext('2d')
       ctx.save()
-      ctx.fillStyle = showHeatWarning.value ? 'rgba(255, 0, 0, 0.1)' : 'white'
+      ctx.fillStyle = isHot ? 'rgba(255, 0, 0, 0.1)' : 'white'
       ctx.fillRect(0, 0, chart.width, chart.height)
       ctx.restore()
     },
@@ -101,6 +102,7 @@ function renderChart() {
     </div>
 
     <div class="h-64 w-full">
+        <span v-if="false">latestHeatIndex }}<br>{{ HEAT_INDEX_ALERT_THRESHOLD }}</span>
       <canvas ref="canvas"></canvas>
     </div>
   </div>
