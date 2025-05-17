@@ -6,69 +6,43 @@ use Illuminate\Console\Command;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use Illuminate\Support\Facades\Log;
-use App\Models\SensorData;
 
-class MqttSensorListener extends Command
+class MqttRawLogger extends Command
 {
-    protected $signature = 'mqtt:listen';
-    protected $description = 'Listen for MQTT sensor data and store it';
+    protected $signature = 'mqtt:lograw';
+    protected $description = 'Subscribe to MQTT topic and log raw messages for debug';
 
     public function handle()
     {
-
-        $server   = env('MQTT_HOST', '127.0.0.1');
+        $server   = env('MQTT_HOST', 'data.barrittgroup.com');
         $port     = env('MQTT_PORT', 1883);
-        $clientId = env('MQTT_CLIENT_ID', 'laravel-listener');
-        $clean    = true;
+        $clientId = env('MQTT_CLIENT_ID', 'raw-debugger');
 
-        $connectionSettings = (new ConnectionSettings)
-            ->setKeepAliveInterval(30)
-            ->setConnectTimeout(10);
+        $this->info("🔌 Connecting to MQTT at $server:$port");
 
-        $this->info("🚀 Starting MQTT sensor listener...");
+        $mqtt = new MqttClient($server, $port, $clientId);
 
-        while (true) {
-            try {
-                $mqtt = new MqttClient($server, $port, $clientId);
-                $mqtt->connect($connectionSettings, $clean);
-                $this->info("✅ Connected to MQTT broker at {$server}:{$port}");
+        try {
+            $mqtt->connect(new ConnectionSettings(), true);
+            $this->info("✅ Connected to MQTT broker");
+        } catch (\Throwable $e) {
+            $this->error("❌ Failed to connect: " . $e->getMessage());
+            Log::error('❌ MQTT connection failed', ['error' => $e->getMessage()]);
+            return 1;
+        }
 
-                // Subscribe to all sensors
-                $mqtt->subscribe('/sensor/+/data', function (string $topic, string $message) {
-                    $parts = explode('/', $topic);
-                    $device = $parts[2] ?? 'unknown';
+        $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
+            Log::info('📥 RAW MQTT', ['topic' => $topic, 'message' => $message]);
+        }, 0);
 
-                    Log::info("📥 MQTT message from [$device]", [
-                        'topic' => $topic,
-                        'payload' => $message,
-                    ]);
+        $this->info("📡 Listening for messages on /sensor/# ...");
 
-                    $data = json_decode($message, true);
-                    if (is_array($data)) {
-                        $data['device_id'] = $data['device_id'] ?? $device;
-                        try {
-                            SensorData::create($data);
-                            Log::info("✅ Stored sensor data for $device");
-                        } catch (\Throwable $e) {
-                            Log::error("❌ DB error for $device", [
-                                'error' => $e->getMessage(),
-                                'data' => $data,
-                            ]);
-                        }
-                    } else {
-                        Log::warning("⚠️ Invalid JSON payload from $device", ['raw' => $message]);
-                    }
-                }, 0);
-
-                $mqtt->loop(true); // blocks and auto-reconnects
-
-            } catch (\Throwable $e) {
-                Log::error('❌ MQTT loop crashed', ['error' => $e->getMessage()]);
-                $this->error('MQTT error: ' . $e->getMessage());
-
-                // Wait before retrying connection
-                sleep(5);
-            }
+        try {
+            $mqtt->loop(true);
+        } catch (\Throwable $e) {
+            Log::critical('🔥 MQTT loop crashed', ['error' => $e->getMessage()]);
+            $this->error("🔥 Loop failed: " . $e->getMessage());
+            return 1;
         }
 
         return 0;
