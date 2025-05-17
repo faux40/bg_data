@@ -21,5 +21,6 @@ Route::get('/check-sid', function () {
 Route::get('/sensor-data', [SensorDataController::class, 'index']);
 
 
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

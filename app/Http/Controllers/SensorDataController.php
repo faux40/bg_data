@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+    use App\Models\SensorData;
+
+
 class SensorDataController extends Controller
 {
     public function index()
@@ -18,37 +21,39 @@ class SensorDataController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
-        // Log::info('Received Tasmota data', $request->all());
 
-    // ✅ Log the entire query string or selected fields
-    // Log::info('Received sensor data', $request->all());
-        // if ($request->get('sid') !== env('TASMOTA_SID')) {
-        //     return response()->json(['error' => 'Invalid SID'], 403);
-        // }
-        // if ($request->get('sid') !== '675bc5a5e800d0c39b9bfc47bc599016') {
-        //     return response()->json(['error' => 'Invalid SID'], 403);
-        // }
-    
-        DB::table('sensor_data')->insert([
-            'unit' => $request->get('unit'),
-            'controller' => $request->get('controller'),
-            'model' => $request->get('model'),
-            'temp' => $request->get('temp'),
-            'hum' => $request->get('hum'),
-            'dewpoint' => $request->get('dewpoint'),
-            'relay1' => $request->get('relay1'),
-            'relay2' => $request->get('relay2'),
-            'sid' => $request->get('sid'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-    
-    //     return response('OK', 200)
-    //    ->header('Content-Type', 'text/plain');
+public function store(Request $request)
+{
+    $data = $request->validate([
+        'device_id' => 'nullable|string|max:255',
+        'sid' => 'nullable|string|max:255',
+        'temperature' => 'nullable|numeric',
+        'temp_unit' => 'nullable|string|max:5',
+        'humidity' => 'nullable|numeric',
+
+        'pm1_0_std' => 'nullable|numeric',
+        'pm2_5_std' => 'nullable|numeric',
+        'pm10_0_std' => 'nullable|numeric',
+        'pm1_0_env' => 'nullable|numeric',
+        'pm2_5_env' => 'nullable|numeric',
+        'pm10_0_env' => 'nullable|numeric',
+
+        'particles_0_3um' => 'nullable|integer',
+        'particles_0_5um' => 'nullable|integer',
+        'particles_1_0um' => 'nullable|integer',
+        'particles_2_5um' => 'nullable|integer',
+        'particles_5_0um' => 'nullable|integer',
+        'particles_10_0um' => 'nullable|integer',
+    ]);
+
+    $entry = SensorData::create($data);
+
+    return response()->json([
+        'status' => 'ok',
+        'id' => $entry->id,
+        'created_at' => $entry->created_at,
+    ]);
+}
 
 
-        return response()->json(['ok' => true]);
-    }
 }
