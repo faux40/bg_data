@@ -89,68 +89,75 @@ function renderChart() {
             ctx.restore()
         },
     }
+    
+const maxTicks = window.innerWidth < 640 ? 6 : 12; // Tailwind sm breakpoint
 
-
-  chart = new Chart(canvas.value, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'PM1.0',
-          data: pm1,
-          borderColor: 'purple',
-          borderWidth: 1,
-          tension: 0.4,
-          yAxisID: 'logY',
-        },
-        {
-          label: 'PM2.5',
-          data: pm25,
-          borderColor: 'green',
-          borderWidth: 4,
-          tension: 0.4,
-          yAxisID: 'logY',
-        },
-        {
-          label: 'PM10',
-          data: pm10,
-          borderColor: 'brown',
-          borderWidth: 1,
-          tension: 0.4,
-          yAxisID: 'logY',
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
+chart = new Chart(canvas.value, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'PM1.0',
+        data: pm1,
+        borderColor: 'purple',
+        borderWidth: 1,
+        tension: 0.4,
+        yAxisID: 'logY',
       },
-      scales: {
-        logY: {
-          type: 'logarithmic',
-          position: 'left',
-          min: 0.1,
-          title: {
-            display: true,
-            text: 'AQI PM (log scale)',
-          },
-          ticks: {
-            callback: function (value) {
-              return [0.1, 1, 10, 100, 1000].includes(value) ? value : ''
-            },
-          },
+      {
+        label: 'PM2.5',
+        data: pm25,
+        borderColor: 'green',
+        borderWidth: 4,
+        tension: 0.4,
+        yAxisID: 'logY',
+      },
+      {
+        label: 'PM10',
+        data: pm10,
+        borderColor: 'brown',
+        borderWidth: 1,
+        tension: 0.4,
+        yAxisID: 'logY',
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
+    scales: {
+      logY: {
+        type: 'logarithmic',
+        position: 'left',
+        min: 0.1,
+        title: {
+          display: true,
+          text: 'AQI PM (log scale)',
         },
-        x: {
-          type: 'category',
+        ticks: {
+          callback: function (value) {
+            return [0.1, 1, 10, 100, 1000].includes(value) ? value : ''
+          },
         },
       },
+      x: {
+        type: 'category',
+        ticks: {
+          maxTicksLimit: maxTicks,
+          autoSkip: true,
+          maxRotation: 45,
+          minRotation: 0,
+        },
+      },
     },
-    plugins: [backgroundPlugin],
-  })
+  },
+  plugins: [backgroundPlugin],
+})
 }
 </script>
 
