@@ -26,6 +26,12 @@ class SensorDataController extends Controller
 
     public function store(Request $request)
     {
+    // ✅ Log the full raw JSON payload
+    Log::debug('📥 Incoming sensor POST', [
+        'raw' => $request->all()
+    ]);
+
+
         $data = $request->validate([
             'device_id' => 'nullable|string|max:255',
             'sid' => 'nullable|string|max:255',
