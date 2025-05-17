@@ -6,21 +6,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-    use App\Models\SensorData;
-// use App\Models\SensorData;
-
+use Inertia\Inertia;
+use App\Models\SensorData;
 
 class SensorDataController extends Controller
 {
     
 
-    public function index()
-    {
-        // Get the 100 most recent rows from sensor_data
-        $data = SensorData::orderBy('created_at', 'desc')->limit(100)->get();
+public function index()
+{
+    $data = SensorData::orderByDesc('created_at')->limit(100)->get();
+    
+    return Inertia::render('SensorData/Index', [
+        'data' => $data,
+    ]);
+}
 
-        return view('sensor-data.index', compact('data'));
-    }
+
+    // public function index()
+    // {
+    //     // Get the 100 most recent rows from sensor_data
+    //     $data = SensorData::orderBy('created_at', 'desc')->limit(100)->get();
+
+    //     return view('sensor-data.index', compact('data'));
+    // }
 
 
 

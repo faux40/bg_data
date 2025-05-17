@@ -19,7 +19,9 @@ Route::get('/check-sid', function () {
     return env('TASMOTA_SID');
 });
 
-Route::get('/sensor-data', [SensorDataController::class, 'index']);
+// Route::get('/sensor-data', [SensorDataController::class, 'index']);
+Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor-data.index');
+
 
 
 

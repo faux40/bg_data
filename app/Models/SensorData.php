@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SensorData extends Model
 {
+    
+    protected $table = 'sensor_data';
     protected $fillable = [
         'device_id',
         'sid',
@@ -25,6 +27,7 @@ class SensorData extends Model
         'particles_5_0um',
         'particles_10_0um',
     ];
+    protected $appends = ['heat_index_f'];
 
 
     // ✅ Virtual accessors
