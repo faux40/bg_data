@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 import { Chart, registerables } from 'chart.js'
 
 Chart.register(...registerables)
@@ -11,13 +11,60 @@ const props = defineProps({
 const canvas = ref(null)
 let chart = null
 
-const renderChart = () => {
+// const latestPm25 = computed(() => {
+//   if (!props.data?.length) return null
+//   return props.data[props.data.length - 1].pm2_5_std ?? null
+// })
+const latestPm25 = computed(() => {
+  if (!props.data?.length) return null
+  return props.data[props.data.length - 1].pm2_5_std ?? null
+})
+// const showAQIWarning = computed(() => latestPm25.value > 2 && latestPm25.value <= 3)
+// const showSevereAQIWarning = computed(() => latestPm25.value > 3)
+
+const showAQIWarning = computed(() => {
+  if (latestPm25.value == null) return false
+  return latestPm25.value > 2
+})
+
+const showSevereAQIWarning = computed(() => {
+  if (latestPm25.value == null) return false
+  return latestPm25.value > 3
+})
+
+
+onMounted(() => renderChart())
+watch(() => props.data, () => renderChart(), { deep: true })
+
+function renderChart() {
   if (chart) chart.destroy()
 
-  const labels = props.data.map(row => new Date(row.created_at).toLocaleTimeString())
-  const pm1 = props.data.map(row => row.pm1_0_std ?? 0)
-  const pm25 = props.data.map(row => row.pm2_5_std ?? 0)
-  const pm10 = props.data.map(row => row.pm10_0_std ?? 0)
+    // const labels = props.data.map(row => new Date(row.created_at).toLocaleTimeString())
+    // const pm1 = props.data.map(row => row.pm1_0_std)
+    // const pm25 = props.data.map(row => row.pm2_5_std)
+    // const pm10 = props.data.map(row => row.pm10_0_std)
+
+    const labels = props.data.map(row => new Date(row.created_at).toLocaleTimeString()).reverse()
+    const pm1 = props.data.map(row => row.pm1_0_std).reverse()
+    const pm25 = props.data.map(row => row.pm2_5_std).reverse()
+    const pm10 = props.data.map(row => row.pm10_0_std).reverse()
+
+  const backgroundPlugin = {
+    id: 'aqiBackground',
+    beforeDraw: (chart) => {
+      const ctx = chart.canvas.getContext('2d')
+      ctx.save()
+      if (showSevereAQIWarning.value) {
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.1)' // red
+      } else if (showAQIWarning.value) {
+        ctx.fillStyle = 'rgba(255, 165, 0, 0.1)' // orange
+      } else {
+        ctx.fillStyle = 'white'
+      }
+      ctx.fillRect(0, 0, chart.width, chart.height)
+      ctx.restore()
+    },
+  }
 
   chart = new Chart(canvas.value, {
     type: 'line',
@@ -25,44 +72,48 @@ const renderChart = () => {
       labels,
       datasets: [
         {
-          label: 'PM1.0 (std)',
+          label: 'PM1.0',
           data: pm1,
-          borderColor: 'green',
-          tension: 0.3,
-        },
-        {
-          label: 'PM2.5 (std)',
-          data: pm25,
           borderColor: 'purple',
-          tension: 0.3,
+  borderWidth: 1, 
+          tension: 0.4,
         },
         {
-          label: 'PM10.0 (std)',
+          label: 'PM2.5',
+          data: pm25,
+          borderColor: 'green',
+  borderWidth: 4, 
+          tension: 0.4,
+        },
+        {
+          label: 'PM10',
           data: pm10,
           borderColor: 'brown',
-          tension: 0.3,
+  borderWidth: 1, 
+          tension: 0.4,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'μg/m³' },
-        },
-      },
     },
+    plugins: [backgroundPlugin],
   })
 }
-
-onMounted(renderChart)
-watch(() => props.data, renderChart, { deep: true })
 </script>
 
 <template>
-  <div class="w-full h-64 mt-10">
-    <canvas ref="canvas"></canvas>
+  <div class="w-full">
+    <div v-if="showSevereAQIWarning" class="bg-red-600 text-white text-center font-bold py-2 mb-2">
+      ⚠️ P100 Required – Poor Air Quality
+    </div>
+    <div v-else-if="showAQIWarning" class="bg-orange-500 text-white text-center font-bold py-2 mb-2">
+      ⚠️ N95 Required – Elevated Air Quality Risk
+    </div>
+
+    <div class="h-64 w-full">
+      <canvas ref="canvas"></canvas>
+    </div>
   </div>
 </template>

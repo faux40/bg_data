@@ -6,6 +6,7 @@ import { router } from '@inertiajs/vue3'
 import TempChart from '@/components/TempChart.vue'
 import AqiChart from '@/components/AqiChart.vue'
 
+import { formatDate } from '@/Utils/dateFormatter';
 
 
 defineProps({ data: Array })
@@ -27,7 +28,7 @@ const heatIndex = (T, R) => {
   ).toFixed(1)
 }
 
-const secondsToRefresh = ref(60)
+const secondsToRefresh = ref(10)
 
 // Refresh every 60 seconds
 
@@ -76,7 +77,7 @@ onMounted(() => {
         <tbody>
           <tr v-for="row in data" :key="row.id">
             <td class="px-2 py-1 border">{{ row.id }}</td>
-            <td class="px-2 py-1 border">{{ row.created_at }}</td>
+            <td class="px-2 py-1 border">{{ formatDate(row.created_at, 'datetime') }}</td>
             <td class="px-2 py-1 border">{{ row.device_id }}</td>
             <td class="px-2 py-1 border">{{ row.temperature }}</td>
             <td class="px-2 py-1 border">{{ toFahrenheit(row.temperature).toFixed(1) }}</td>
