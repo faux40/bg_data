@@ -8,6 +8,12 @@ import AqiChart from '@/components/AqiChart.vue'
 
 import { formatDate } from '@/Utils/dateFormatter';
 
+import useTitle from '@/composables/useTitle'
+
+const title = 'Sensor Dashboard';
+
+useTitle(title);
+
 
 defineProps({ data: Array })
 
@@ -27,6 +33,7 @@ const heatIndex = (T, R) => {
     0.00000199 * T_F * T_F * R * R
   ).toFixed(1)
 }
+console.log('Setting title to:', title)
 
 const REFRESH_INTERVAL = 10 // in seconds
 const secondsToRefresh = ref(REFRESH_INTERVAL)
@@ -54,6 +61,7 @@ onMounted(() => {
             <h1 class="text-xl font-bold mb-4">Sensor Data (Latest 100) </h1>
             <span>Refreshing in {{ secondsToRefresh }}s...</span>
         </div>
+
     <TempChart :data="data" />
     <AqiChart :data="data" />
 
