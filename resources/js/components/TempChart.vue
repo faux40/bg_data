@@ -1,42 +1,42 @@
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue'
 import { Chart, registerables } from 'chart.js'
+
 Chart.register(...registerables)
 
 const props = defineProps({ data: Array })
+
 const canvas = ref(null)
 let chart = null
 
-const toF = c => (c * 9) / 5 + 32
-const HEAT_INDEX_ALERT_THRESHOLD = 81.79
-const reversed = [...props.data].reverse()
+const toF = (c) => (c * 9) / 5 + 32
+const HEAT_WARNING_THRESHOLD = 82
 
-// const latestHeatIndex = computed(() => props.data.at(-1)?.heat_index_f ?? null)
-// const showHeatWarning = computed(() => latestHeatIndex.value > HEAT_INDEX_ALERT_THRESHOLD)
+// Dynamically limit data points
+const isSmall = window.innerWidth < 640
+const displayCount = isSmall ? 20 : 100
+const trimmed = computed(() => [...props.data.slice(-displayCount)].reverse())
 
-// const latestHeatIndex = computed(() => reversed.at(0)?.heat_index_f ?? null)
-const latestHeatIndex = computed(() => reversed.at(-1)?.heat_index_f ?? null)
-const showHeatWarning = computed(() => latestHeatIndex.value > HEAT_INDEX_ALERT_THRESHOLD)
+const latestHeatIndex = computed(() => trimmed.value.at(-1)?.heat_index_f ?? null)
+const showHeatWarning = computed(() => latestHeatIndex.value !== null && latestHeatIndex.value > HEAT_WARNING_THRESHOLD)
 
-onMounted(() => renderChart())
+onMounted(renderChart)
 watch(() => props.data, renderChart, { deep: true })
 
 function renderChart() {
   if (chart) chart.destroy()
 
-  const labels = props.data.map(row => new Date(row.created_at).toLocaleTimeString()).reverse()
-  const temperatureF = props.data.map(row => toF(row.temperature)).reverse()
-  const humidity = props.data.map(row => row.humidity).reverse()
-  const heatIndex = props.data.map(row => row.heat_index_f).reverse()
-
-  const isHot = showHeatWarning.value // ✅ Capture *now* rather than closing over it
+  const labels = trimmed.value.map(row => new Date(row.created_at).toLocaleTimeString())
+  const temperatureF = trimmed.value.map(row => toF(row.temperature))
+  const humidity = trimmed.value.map(row => row.humidity)
+  const heatIndex = trimmed.value.map(row => row.heat_index_f)
 
   const backgroundPlugin = {
     id: 'customBackgroundColor',
-    beforeDraw: (chart) => {
+    beforeDraw(chart) {
       const ctx = chart.canvas.getContext('2d')
       ctx.save()
-      ctx.fillStyle = isHot ? 'rgba(255, 0, 0, 0.1)' : 'white'
+      ctx.fillStyle = showHeatWarning.value ? 'rgba(255, 0, 0, 0.1)' : 'white'
       ctx.fillRect(0, 0, chart.width, chart.height)
       ctx.restore()
     },
@@ -96,17 +96,12 @@ function renderChart() {
 </script>
 
 <template>
-  <div class="w-full my-8 border-b border-black pb-4">
+  <div class="w-full">
     <div v-if="showHeatWarning" class="bg-red-600 text-white text-center font-bold py-2 mb-2">
-      ⚠️ High Indoor Heat Rules In Effect ({{ HEAT_INDEX_ALERT_THRESHOLD }} degrees and above)
+      ⚠️ High Indoor Heat Rules In Effect
     </div>
-
     <div class="h-64 w-full">
-        <span v-if="true">{{ latestHeatIndex }} = {{ HEAT_INDEX_ALERT_THRESHOLD }}</span>
       <canvas ref="canvas"></canvas>
     </div>
-
-    <hr class="my-4 border-t border-black" />
-
   </div>
 </template>

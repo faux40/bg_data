@@ -49,45 +49,45 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mx-24 my-6">
-    <div class="flex justify-between">
-        <h1 class="text-xl font-bold mb-4">Sensor Data (Latest 100) </h1>
-        <span>Refreshing in {{ secondsToRefresh }}s...</span>
-    </div>
+    <div class="mx-2 sm:mx-8 md:mx-16 lg:mx-24 my-6">
+        <div class="flex justify-between">
+            <h1 class="text-xl font-bold mb-4">Sensor Data (Latest 100) </h1>
+            <span>Refreshing in {{ secondsToRefresh }}s...</span>
+        </div>
     <TempChart :data="data" />
     <AqiChart :data="data" />
 
 
-    <div class="overflow-x-auto m-12">
+    <div class="overflow-x-auto mx-4 sm:mx-8 md:mx-16 lg:mx-24 my-6">
       <table class="min-w-full border text-sm">
         <thead class="bg-gray-100">
           <tr>
-            <th class="px-2 py-1 border">ID</th>
-            <th class="px-2 py-1 border">Time</th>
-            <th class="px-2 py-1 border">Device</th>
-            <th class="px-2 py-1 border">Temp (°C)</th>
-            <th class="px-2 py-1 border">Temp (°F)</th>
-            <th class="px-2 py-1 border">Humidity (%)</th>
-            <th class="px-2 py-1 border">Heat Index (°F)</th>
-            <th class="px-2 py-1 border">PM1.0</th>
-            <th class="px-2 py-1 border">PM2.5</th>
-            <th class="px-2 py-1 border">PM10</th>
-            <th class="px-2 py-1 border">SID</th>
+            <th class="px-1 py-1 border">ID</th>
+            <th class="px-1 py-1 border">Time</th>
+            <th class="px-1 py-1 border">Device</th>
+            <th class="px-1 py-1 border">Temp (°C)</th>
+            <th class="px-1 py-1 border">Temp (°F)</th>
+            <th class="px-1 py-1 border">Humidity (%)</th>
+            <th class="px-1 py-1 border">Heat Index (°F)</th>
+            <th class="px-1 py-1 border">PM1.0</th>
+            <th class="px-1 py-1 border">PM2.5</th>
+            <th class="px-1 py-1 border">PM10</th>
+            <th class="px-1 py-1 border">SID</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="row in data" :key="row.id">
-            <td class="px-2 py-1 border">{{ row.id }}</td>
-            <td class="px-2 py-1 border">{{ formatDate(row.created_at, 'datetime') }}</td>
-            <td class="px-2 py-1 border">{{ row.device_id }}</td>
-            <td class="px-2 py-1 border">{{ row.temperature }}</td>
-            <td class="px-2 py-1 border">{{ toFahrenheit(row.temperature).toFixed(1) }}</td>
-            <td class="px-2 py-1 border">{{ row.humidity }}</td>
-            <td class="px-2 py-1 border">{{ heatIndex(row.temperature, row.humidity) }}</td>
-            <td class="px-2 py-1 border">{{ row.pm1_0_std }}</td>
-            <td class="px-2 py-1 border">{{ row.pm2_5_std }}</td>
-            <td class="px-2 py-1 border">{{ row.pm10_0_std }}</td>
-            <td class="px-2 py-1 border">{{ row.sid }}</td>
+            <td class="px-1 py-1 border">{{ row.id }}</td>
+            <td class="px-1 py-1 border">{{ formatDate(row.created_at, 'datetime') }}</td>
+            <td class="px-1 py-1 border">{{ row.device_id }}</td>
+            <td class="px-1 py-1 border">{{ row.temperature }}</td>
+            <td class="px-1 py-1 border">{{ toFahrenheit(row.temperature).toFixed(1) }}</td>
+            <td class="px-1 py-1 border">{{ row.humidity }}</td>
+            <td class="px-1 py-1 border">{{ heatIndex(row.temperature, row.humidity) }}</td>
+            <td class="px-1 py-1 border">{{ row.pm1_0_std }}</td>
+            <td class="px-1 py-1 border">{{ row.pm2_5_std }}</td>
+            <td class="px-1 py-1 border">{{ row.pm10_0_std }}</td>
+            <td class="px-1 py-1 border">{{ row.sid }}</td>
           </tr>
         </tbody>
       </table>
