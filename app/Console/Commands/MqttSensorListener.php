@@ -15,9 +15,10 @@ class MqttSensorListener extends Command
 
     public function handle()
     {
-        $server   = '127.0.0.1';
-        $port     = 1883;
-        $clientId = 'laravel-listener';
+
+        $server   = env('MQTT_HOST', '127.0.0.1');
+        $port     = env('MQTT_PORT', 1883);
+        $clientId = env('MQTT_CLIENT_ID', 'laravel-listener');
         $clean    = true;
 
         $connectionSettings = (new ConnectionSettings)
