@@ -31,6 +31,9 @@
         <th>Temp (°F)</th>
         <th>Humidity (%)</th>
         <th>Heat Index (°F)</th>
+        <th>PM1.0</th>
+        <th>PM2.5</th>
+        <th>PM10</th>
         <th>SID</th>
     </tr>
 </thead>
@@ -44,11 +47,14 @@
             <td>{{ $row->temperature_f }}</td>
             <td>{{ $row->humidity }}</td>
             <td>{{ $row->heat_index_f }}</td>
+            <td>{{ $row->pm1_0_std }}</td>
+            <td>{{ $row->pm2_5_std }}</td>
+            <td>{{ $row->pm10_0_std }}</td>
             <td>{{ $row->sid }}</td>
         </tr>
     @empty
         <tr>
-            <td colspan="8">No data found.</td>
+            <td colspan="11">No data found.</td>
         </tr>
     @endforelse
 </tbody>
