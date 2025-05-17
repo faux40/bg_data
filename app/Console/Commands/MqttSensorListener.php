@@ -7,7 +7,7 @@ use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use Illuminate\Support\Facades\Log;
 
-class MqttRawLogger extends Command
+class MqttSensorListener extends Command
 {
     protected $signature = 'mqtt:lograw';
     protected $description = 'Subscribe to MQTT topic and log raw messages for debug';
