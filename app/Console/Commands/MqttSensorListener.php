@@ -55,7 +55,7 @@ class MqttSensorListener extends Command
         // 🔄 Loop forever with error handling
         while (true) {
             try {
-                $mqtt->loopOnce(true);
+                $mqtt->loopOnce(1000);
             } catch (\Throwable $e) {
                 Log::error('❌ MQTT loop error', ['error' => $e->getMessage()]);
                 $this->warn('⚠️ MQTT loop error: ' . $e->getMessage());
