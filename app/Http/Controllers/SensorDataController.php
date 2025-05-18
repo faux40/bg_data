@@ -15,8 +15,16 @@ class SensorDataController extends Controller
 
 public function index()
 {
-    $data = SensorData::orderByDesc('created_at')->limit(100)->get();
-    
+    $data = SensorData::where(function ($query) {
+        $query
+            ->where('pm1_0_std', '!=', -1)
+            ->orWhere('pm2_5_std', '!=', -1)
+            ->orWhere('pm10_0_std', '!=', -1);
+    })
+    ->orderByDesc('created_at')
+    ->limit(100)
+    ->get();
+
     return Inertia::render('SensorData/Index', [
         'data' => $data,
     ]);

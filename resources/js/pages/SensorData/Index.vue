@@ -28,10 +28,10 @@ const heatIndex = (T, R) => {
   ).toFixed(1)
 }
 
-const REFRESH_INTERVAL = 10 // in seconds
+const REFRESH_INTERVAL = 180 // in seconds
 const secondsToRefresh = ref(REFRESH_INTERVAL)
 
-// Refresh every 60 seconds
+// Refresh every 180 seconds
 
 onMounted(() => {
   setInterval(() => {
