@@ -9,8 +9,8 @@ const props = defineProps({ data: Array })
 const canvas = ref(null)
 let chart = null
 
-const badAir = 3
-const crapAir = 5
+const badAir = 4
+const crapAir = 8
 
 // Trim data based on screen size
 const isSmall = window.innerWidth < 640
@@ -118,7 +118,8 @@ function renderChart() {
 
 <template>
   <div class="w-full my-8 border-b border-black pb-4">
-    <span>Latest AQI PM2.5 = {{ latestPm25 }}</span>
+    <span>Latest AQI PM2.5 = {{ latestPm25 }} <span class="text-sm ml-4 italic">(Bad Air Trigger: {{ badAir }}, Super Bad Air Trigger: {{ crapAir }})</span></span>
+
     <div v-if="isCrapAir" class="bg-red-600 text-white text-center font-bold py-2 mb-2">
       ⚠️ P100 Required – Poor Air Quality
     </div>
