@@ -10,7 +10,7 @@ const canvas = ref(null)
 let chart = null
 
 const toF = (c) => (c * 9) / 5 + 32
-const HEAT_WARNING_THRESHOLD = 77
+const HEAT_WARNING_THRESHOLD = 87
 
 // Dynamically limit data points
 const isSmall = window.innerWidth < 640
