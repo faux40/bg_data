@@ -72,6 +72,7 @@ public function index()
         ]);
 
     $entry = SensorData::create($data);
+    Log::debug('entry', [ 'raw' => $entry]);
 
     return response()->json([
         'status' => 'ok',
