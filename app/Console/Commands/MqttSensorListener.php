@@ -49,7 +49,7 @@ class MqttSensorListener extends Command
 // });
 // inside: $mqtt->subscribe(...)
 $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
-    Log::info('📥 RAW MQTT', ['topic' => $topic, 'message' => $message]);
+    Log::info('📥 RAW MQTT XXX', ['topic' => $topic, 'message' => $message]);
 
     try {
         $payload = json_decode($message, true);
