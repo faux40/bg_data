@@ -9,8 +9,8 @@ const props = defineProps({ data: Array })
 const canvas = ref(null)
 let chart = null
 
-const badAir = 151
-const crapAir = 500
+const badAir = 4 //151
+const crapAir = 8 //500
 
 // Trim data based on screen size
 const isSmall = window.innerWidth < 640
