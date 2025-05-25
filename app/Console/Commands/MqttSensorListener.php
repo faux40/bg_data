@@ -60,7 +60,7 @@ $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
         }
 
         // ✅ Forward to internal API (adjust if needed)
-        $response = Http::post('http://localhost/api/sensor', $payload);
+        $response = Http::post('https://data.barrittgroup.com/api/sensor', $payload);
 
         Log::info('📤 Forwarded to API', [
             'status' => $response->status(),
