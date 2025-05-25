@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Log;
 
 class MqttSensorListener extends Command
 {
-    protected $signature = 'mqtt:lograw';
+
+    protected $signature = 'mqtt:listen';
     protected $description = 'Subscribe to MQTT topic and log raw messages for debug';
 
     public function handle()
