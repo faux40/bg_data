@@ -11,24 +11,24 @@ use App\Models\SensorData;
 
 class SensorDataController extends Controller
 {
-    
 
-public function index()
-{
-    $data = SensorData::where(function ($query) {
-        $query
-            ->where('pm1_0_std', '!=', -1)
-            ->orWhere('pm2_5_std', '!=', -1)
-            ->orWhere('pm10_0_std', '!=', -1);
-    })
-    ->orderByDesc('created_at')
-    ->limit(100)
-    ->get();
 
-    return Inertia::render('SensorData/Index', [
-        'data' => $data,
-    ]);
-}
+    public function index()
+    {
+        $data = SensorData::where(function ($query) {
+            $query
+                ->where('pm1_0_std', '!=', -1)
+                ->orWhere('pm2_5_std', '!=', -1)
+                ->orWhere('pm10_0_std', '!=', -1);
+        })
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->get();
+
+        return Inertia::render('SensorData/Index', [
+            'data' => $data,
+        ]);
+    }
 
 
     // public function index()
@@ -43,10 +43,10 @@ public function index()
 
     public function store(Request $request)
     {
-    // ✅ Log the full raw JSON payload
-    Log::debug('📥 Incoming sensor POST', [
-        'raw' => $request->all()
-    ]);
+        // ✅ Log the full raw JSON payload
+        // Log::debug('📥 Incoming sensor POST', [
+        //     'raw' => $request->all()
+        // ]);
 
 
         $data = $request->validate([
@@ -71,15 +71,12 @@ public function index()
             'particles_10_0um' => 'nullable|integer',
         ]);
 
-    $entry = SensorData::create($data);
-    Log::debug('entry', [ 'raw' => $entry]);
+        $entry = SensorData::create($data);
 
-    return response()->json([
-        'status' => 'ok',
-        'id' => $entry->id,
-        'created_at' => $entry->created_at,
-    ]);
-}
-
-
+        return response()->json([
+            'status' => 'ok',
+            'id' => $entry->id,
+            'created_at' => $entry->created_at,
+        ]);
+    }
 }
