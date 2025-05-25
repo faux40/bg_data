@@ -49,7 +49,7 @@ class MqttSensorListener extends Command
 // });
 // inside: $mqtt->subscribe(...)
 $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
-    Log::info('📥 RAW MQTT XXX', ['topic' => $topic, 'message' => $message]);
+    Log::info('📥 RAW MQTT', ['topic' => $topic, 'message' => $message]);
 
     try {
         $payload = json_decode($message, true);
@@ -60,7 +60,8 @@ $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
         }
 
         // ✅ Forward to internal API (adjust if needed)
-        $response = Http::post('https://data.barrittgroup.com/api/sensor', $payload);
+        // $response = Http::post('https://data.barrittgroup.com/api/sensor', $payload);
+        $response = Http::post('https://localhost/api/sensor', $payload);
 
         Log::info('📤 Forwarded to API', [
             'status' => $response->status(),
