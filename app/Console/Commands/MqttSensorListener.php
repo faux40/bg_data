@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use PhpMqtt\Client\MqttClient;
+use Illuminate\Support\Facades\Http;
 use PhpMqtt\Client\ConnectionSettings;
 use Illuminate\Support\Facades\Log;
 
@@ -32,9 +33,21 @@ class MqttSensorListener extends Command
             return 1;
         }
 
-        $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
-            Log::info('📥 RAW MQTT', ['topic' => $topic, 'message' => $message]);
-        }, 0);
+        // $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
+        //     Log::info('📥 RAW MQTT', ['topic' => $topic, 'message' => $message]);
+        // }, 0);
+
+$mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
+    Log::info('📥 MQTT received', ['topic' => $topic, 'payload' => $message]);
+
+    try {
+        $response = Http::post('https://data.barrittgroup.com/api/sensor', json_decode($message, true));
+        Log::info('✅ Forwarded to API', ['status' => $response->status(), 'body' => $response->body()]);
+    } catch (\Throwable $e) {
+        Log::error('❌ Failed to POST to /api/sensor', ['error' => $e->getMessage()]);
+    }
+});
+
 
         $this->info("📡 Listening for messages on /sensor/# ...");
 
