@@ -37,14 +37,37 @@ class MqttSensorListener extends Command
         //     Log::info('📥 RAW MQTT', ['topic' => $topic, 'message' => $message]);
         // }, 0);
 
+// $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
+//     Log::info('📥 MQTT received', ['topic' => $topic, 'payload' => $message]);
+
+//     try {
+//         $response = Http::post('https://data.barrittgroup.com/api/sensor', json_decode($message, true));
+//         Log::info('✅ Forwarded to API', ['status' => $response->status(), 'body' => $response->body()]);
+//     } catch (\Throwable $e) {
+//         Log::error('❌ Failed to POST to /api/sensor', ['error' => $e->getMessage()]);
+//     }
+// });
+// inside: $mqtt->subscribe(...)
 $mqtt->subscribe('/sensor/#', function (string $topic, string $message) {
-    Log::info('📥 MQTT received', ['topic' => $topic, 'payload' => $message]);
+    Log::info('📥 RAW MQTT', ['topic' => $topic, 'message' => $message]);
 
     try {
-        $response = Http::post('https://data.barrittgroup.com/api/sensor', json_decode($message, true));
-        Log::info('✅ Forwarded to API', ['status' => $response->status(), 'body' => $response->body()]);
+        $payload = json_decode($message, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($payload)) {
+            Log::warning("⚠️ Invalid JSON payload: " . $message);
+            return;
+        }
+
+        // ✅ Forward to internal API (adjust if needed)
+        $response = Http::post('http://localhost/api/sensor', $payload);
+
+        Log::info('📤 Forwarded to API', [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
     } catch (\Throwable $e) {
-        Log::error('❌ Failed to POST to /api/sensor', ['error' => $e->getMessage()]);
+        Log::error('❌ Failed to forward to sensor API', ['error' => $e->getMessage()]);
     }
 });
 
