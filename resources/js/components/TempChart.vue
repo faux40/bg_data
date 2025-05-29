@@ -9,7 +9,7 @@ const props = defineProps({ data: Array })
 const canvas = ref(null)
 let chart = null
 
-const toF = (c) => (c * 9) / 5 + 32
+// const toF = (c) => (c * 9) / 5 + 32
 const HEAT_WARNING_THRESHOLD = 78
 
 // Dynamically limit data points
@@ -27,7 +27,7 @@ function renderChart() {
   if (chart) chart.destroy()
 
   const labels = trimmed.value.map(row => new Date(row.created_at).toLocaleTimeString())
-  const temperatureF = trimmed.value.map(row => toF(row.temperature))
+  const temperatureF = trimmed.value.map(row => row.temperature_f)
   const humidity = trimmed.value.map(row => row.humidity)
   const heatIndex = trimmed.value.map(row => row.heat_index_f)
 

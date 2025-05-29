@@ -27,8 +27,8 @@ class SensorData extends Model
         'particles_5_0um',
         'particles_10_0um',
     ];
-    protected $appends = ['heat_index_f'];
 
+    protected $appends = ['temperature_f', 'heat_index_f'];
 
     // ✅ Virtual accessors
     public function getTemperatureFAttribute(): ?float
