@@ -39,7 +39,7 @@ onMounted(() => {
             <span>Refreshing in {{ secondsToRefresh }}s...</span>
         </div>
     <TempChart :data="data" />
-    <AqiChart v-if="false" :data="data" />
+    <AqiChart :data="data" />
 
     <div class="overflow-x-auto mx-4 sm:mx-8 md:mx-16 lg:mx-24 my-6">
       <table class="min-w-full border text-sm">
@@ -52,10 +52,10 @@ onMounted(() => {
             <th class="px-1 py-1 border">Temp (°F)</th>
             <th class="px-1 py-1 border">Humidity (%)</th>
             <th class="px-1 py-1 border">Heat Idx (°F)</th>
-            <th class="px-1 py-1 border hidden">PM1.0</th>
-            <th class="px-1 py-1 border hidden">PM2.5</th>
-            <th class="px-1 py-1 border hidden">PM10</th>
-            <th class="px-1 py-1 border hidden">SID</th>
+            <th class="px-1 py-1 border">PM1.0</th>
+            <th class="px-1 py-1 border">PM2.5</th>
+            <th class="px-1 py-1 border">PM10</th>
+            <th class="px-1 py-1 border">SID</th>
           </tr>
         </thead>
         <tbody>
@@ -67,10 +67,10 @@ onMounted(() => {
             <td class="px-1 py-1 border">{{ row.temperature_f.toFixed(1) }}</td>
             <td class="px-1 py-1 border">{{ row.humidity }}</td>
             <td class="px-1 py-1 border">{{ row.heat_index_f.toFixed(1) }}</td>
-            <td class="px-1 py-1 border hidden">{{ row.pm1_0_std }}</td>
-            <td class="px-1 py-1 border hidden">{{ row.pm2_5_std }}</td>
-            <td class="px-1 py-1 border hidden">{{ row.pm10_0_std }}</td>
-            <td class="px-1 py-1 border hidden">{{ row.sid }}</td>
+            <td class="px-1 py-1 border">{{ row.pm1_0_std }}</td>
+            <td class="px-1 py-1 border">{{ row.pm2_5_std }}</td>
+            <td class="px-1 py-1 border">{{ row.pm10_0_std }}</td>
+            <td class="px-1 py-1 border">{{ row.sid }}</td>
           </tr>
         </tbody>
       </table>
